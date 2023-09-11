@@ -1,0 +1,1 @@
+// [['NOMI', 'boshqa kiyimlar'], ['RAZMER', 'L'], ['ID', '15'], ['SONI', '45'], ['NARXI', '39000']]
