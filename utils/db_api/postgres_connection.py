@@ -104,6 +104,10 @@ class Db_connection:
     async def select_product(self, pr_name):
         sql = "SELECT * FROM clothes WHERE product_name=$1"
         return await self.execute(sql, pr_name, fetch=True)
+    
+    async def select_product_clothes(self, pr_id):
+        sql = "SELECT * FROM clothes WHERE product_id=$1"
+        return await self.execute(sql, pr_id, fetchrow=True)
 
     async def get_one_clothes(self, pr_id):
         sql = "SELECT * FROM clothes WHERE product_id=$1"

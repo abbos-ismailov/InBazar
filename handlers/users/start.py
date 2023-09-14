@@ -29,11 +29,11 @@ async def get_phone_number(msg: types.Message, state: FSMContext):
     await state.update_data(
         {"phone_number": msg.text}
     )
-    await msg.answer("Raxmat! Ro'yhatdan o'tdingiz.")
     
     data = await state.get_data()
     full_name = data.get("full_name")
     phone_number = data.get("phone_number")
+    
     await state.finish()
-    await msg.answer("Asosiy menu ga uchun <a>/main_menu</a> komandasini yozishingiz mumkin", reply_markup=menu_choice_btn)
     await db.add_user(msg.from_user.id, full_name, phone_number, msg.from_user.username)
+    await msg.answer("Raxmat! Ro'yhatdan o'tdingiz.", reply_markup=menu_choice_btn)

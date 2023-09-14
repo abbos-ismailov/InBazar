@@ -2,15 +2,24 @@ from data.config import ADMINS
 from aiogram import types
 from aiogram.types import ContentType, ReplyKeyboardRemove
 from aiogram.dispatcher.filters import Command
-from loader import dp, db
+from loader import dp, db, bot
 from states.add_product_state import Add_product_states, Delete
 from aiogram.dispatcher import FSMContext
 from pathlib import Path
 from keyboards.default.product_btn import clothes_size, clothes_name
 
-download_path = Path().joinpath("inbazar data")
+download_path = Path().joinpath("inbazar_data")
 download_path.mkdir(parents=False, exist_ok=True)
 
+@dp.message_handler(Command("report", prefixes="?/"), user_id=ADMINS)
+async def bot_start(message: types.Message):
+    with open("inbazar_data/files/clothes_data.xlsx", 'rb') as file:
+        await bot.send_document(chat_id=message.from_user.id, document=file)
+
+# @dp.message_handler(Command("report_clear", prefixes="?/"), user_id=ADMINS)
+# async def bot_start(message: types.Message):
+#     with open("inbazar_data/files/clothes_data.xlsx", 'rb') as file:
+#         await bot.send_document(chat_id=message.from_user.id, document=file)
 
 @dp.message_handler(Command("add_product", prefixes="?/"), user_id=ADMINS)
 async def bot_start(message: types.Message):
