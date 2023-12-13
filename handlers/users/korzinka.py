@@ -29,8 +29,12 @@ async def remove_korzinka(call: types.CallbackQuery):
     purchase_product = await db.get_one_purchases(int(call.data.split("=")[1]), call.from_user.id)
     
     try:
-        purchase_product_count = purchase_product['product_count'] - 1
-        
+        print(purchase_product['product_count'])
+        if purchase_product['product_count'] >= 1:
+            purchase_product_count = purchase_product['product_count'] - 1
+        else:
+            purchase_product['product_count'] = 0
+        print(purchase_product['product_count'])
         await db.update_purchases_count(purchase_product_count, purchase_product['product_id'], call.from_user.id)
         
         # ### Update qilingandan keyingi holatini chiqaryapmiz

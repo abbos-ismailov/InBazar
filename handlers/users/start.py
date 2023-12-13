@@ -2,11 +2,17 @@ from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 from states.registrState import Registr
 from aiogram.dispatcher import FSMContext
-from loader import dp, db
+from loader import dp, db, bot
 from keyboards.default.menu_btn import menu_choice_btn
 
 @dp.message_handler(CommandStart(), state=None)
 async def bot_start(message: types.Message):
+    
+    # with open(f"inbazar_data/files/check.txt", 'w+') as file:
+    #     file.write('fskl;gjwhp')
+        
+    #     await bot.send_document(chat_id=message.from_user.id, document=file)
+    
     await message.answer(f"Salom, {message.from_user.full_name}!")
 
     user_id = message.from_user.id
@@ -15,7 +21,9 @@ async def bot_start(message: types.Message):
     if is_user_member==None:
         await message.answer("To'liq ism familya kiriting")
         await Registr.full_name.set()
-
+    else:
+        await message.answer(f"☺ Botimizga xush kelibsiz", reply_markup=menu_choice_btn)
+    
 @dp.message_handler(state=Registr.full_name)   
 async def get_full_name(msg: types.Message, state: FSMContext):
     await state.update_data(

@@ -1,14 +1,11 @@
 from aiogram import types
-from aiogram.dispatcher.filters import Command
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 from data.config import ADMINS
 from loader import dp, db, bot
 
-from utils.misc.tolov_shablon import Product
-from aiogram.types import LabeledPrice
 from data.prodcut_shablon import REGULAR_SHIPPING, FAST_SHIPPING, PICKUP_SHIPPING, clothes_pr
 
-from openpyxl import load_workbook, workbook
+from openpyxl import load_workbook
 
 from docxtpl import DocxTemplate
 from datetime import datetime as dt
@@ -28,7 +25,10 @@ sheet_obj = wb_obj.active
 @dp.message_handler(text="To'lov qilish")
 async def show_invoices(msg: Message):
     cl_class = await clothes_pr(msg.from_user.id)
-    await bot.send_invoice(chat_id=msg.from_user.id, **cl_class.generate_invoice(), payload="Kiyimlar")
+    try:
+        await bot.send_invoice(chat_id=msg.from_user.id, **cl_class.generate_invoice(), payload="Kiyimlar")
+    except:
+        print("Send invoice da xatolik")
 
 
 # Yetkazib berish xizmati
@@ -56,7 +56,7 @@ async def choose_shipping(query: types.ShippingQuery):
 @dp.pre_checkout_query_handler()
 async def process_pre_checkout_query(checkout_query: types.PreCheckoutQuery):
     await bot.answer_pre_checkout_query(pre_checkout_query_id=checkout_query.id, ok=True)
-
+    
     await bot.send_message(chat_id=checkout_query.from_user.id, text="Xaridingiz uchun rahmat")
 
     info_products = await db.show_purchases(checkout_query.from_user.id) 
@@ -75,16 +75,13 @@ async def process_pre_checkout_query(checkout_query: types.PreCheckoutQuery):
     
     ### <------------ Bu foydalanuvchiga docx chiqarib beradi -------------------->
     ### Chiqqanda ochmayapti
-    data = DocxTemplate('inbazar_data/files/check.docx')
+    # data = DocxTemplate('inbazar_data/files/check.docx')
     
-    obj = {
-        'name': info_text
-    }
-    data.render(obj)
-    data.save(f"inbazar_data/files/{checkout_query.from_user.full_name}-{day}-{month}-{year}.docx")
-    
-    with open(f"inbazar_data/files/{checkout_query.from_user.full_name}-{day}-{month}-{year}.docx", 'rb') as file:
-        await bot.send_document(chat_id=checkout_query.from_user.id, document=file)
+    # obj = {
+    #     'name': info_text
+    # }
+    # data.render(obj)
+    # data.save(f"inbazar_data/files/{checkout_query.from_user.full_name}-{day}-{month}-{year}.docx")
     
     
     id = sheet_obj.max_row + 1

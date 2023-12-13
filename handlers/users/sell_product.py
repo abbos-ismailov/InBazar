@@ -21,12 +21,19 @@ async def kiyimlar(msg: types.Message):
 @dp.message_handler(text="futbolka", state=None)
 async def out_t_shirt(msg: types.Message):
     products = await db.select_product("futbolka")
-    for i in products:
-        product_caption = f"NOMI=<b>{i.get('product_name')}</b>\nRAZMER=<b>{i.get('product_size')}</b>\n"
-        product_caption += f"ID=<b>{i.get('product_id')}</b>\nSONI=<b>{i.get('product_count')}</b>\n"
-        product_caption += f"NARXI=<b>{i.get('product_price')}</b>"
-        await msg.answer_photo(i["product_url"], caption=product_caption, reply_markup=buy_btn)
+    index = 0
+    active_product = products[index]
+    # for i in products:
+    #     product_caption = f"NOMI=<b>{i.get('product_name')}</b>\nRAZMER=<b>{i.get('product_size')}</b>\n"
+    #     product_caption += f"ID=<b>{i.get('product_id')}</b>\nSONI=<b>{i.get('product_count')}</b>\n"
+    #     product_caption += f"NARXI=<b>{i.get('product_price')}</b>"
+    #     await msg.answer_photo(i["product_url"], caption=product_caption, reply_markup=buy_btn)
 
+    product_caption = f"NOMI=<b>{active_product.get('product_name')}</b>\nRAZMER=<b>{active_product.get('product_size')}</b>\n"
+    product_caption += f"ID=<b>{active_product.get('product_id')}</b>\nSONI=<b>{active_product.get('product_count')}</b>\n"
+    product_caption += f"NARXI=<b>{active_product.get('product_price')}</b>"
+    await msg.answer_photo(active_product["product_url"], caption=product_caption, reply_markup=buy_btn)
+    
 @dp.message_handler(text="bosh kiyim", state=None)
 async def out_headdress(msg: types.Message):
     products = await db.select_product("bosh kiyim")
@@ -131,7 +138,7 @@ async def put_backet(call: types.CallbackQuery):
     purchase_item_count = 1
     purchase_item = await db.get_from_purchases(product_id=int(new_elem_list[2][1]), user_tg_id=call.from_user.id)
     clothes_item = await db.get_one_clothes(int(new_elem_list[2][1]))
-    
+    print(purchase_item)
     
     if purchase_item != None:
         purchase_item_count = purchase_item.get('product_count')
